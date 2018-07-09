@@ -7,10 +7,11 @@ import time
 start = time.time()
 
 if len(sys.argv) != 3:
+    print("Please specify valid arguments. Call the program like this \npython face_clustering.py -specify input folder- -specify output path-")
     exit()
-
-predictor_path = 'shape_predictor_5_face_landmarks.dat'
-face_rec_model_path = 'dlib_face_recognition_resnet_model_v1.dat'
+# Download the pre trained models, unzip them and save them in the save folder as this file
+predictor_path = 'shape_predictor_5_face_landmarks.dat' # Download from http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2
+face_rec_model_path = 'dlib_face_recognition_resnet_model_v1.dat' # Download from http://dlib.net/files/shape_predictor_5_face_landmarks.dat.bz2
 faces_folder_path = sys.argv[1]
 output_folder = sys.argv[2]
 
@@ -21,6 +22,7 @@ facerec = dlib.face_recognition_model_v1(face_rec_model_path) #face recognition 
 descriptors = []
 images = []
 
+# Load the images from input folder
 for f in glob.glob(os.path.join(faces_folder_path, "*.jpg")):
     print("Processing file: {}".format(f))
     img = dlib.load_rgb_image(f)
@@ -41,7 +43,7 @@ for f in glob.glob(os.path.join(faces_folder_path, "*.jpg")):
 
 # Cluster the faces.  
 labels = dlib.chinese_whispers_clustering(descriptors, 0.5)
-num_classes = len(set(labels))
+num_classes = len(set(labels)) # Total number of clusters
 print("Number of clusters: {}".format(num_classes))
 
 for i in range(0, num_classes):
@@ -52,10 +54,11 @@ for i in range(0, num_classes):
             indices.append(j)
     print("Indices of images in the cluster {0} : {1}".format(str(i),str(indices)))
     print("Size of cluster {0} : {1}".format(str(i),str(class_length)))
-    output_folder_path = output_folder + '/output' + str(i)
+    output_folder_path = output_folder + '/output' + str(i) # Output folder for each cluster
     os.path.normpath(output_folder_path)
     os.makedirs(output_folder_path)
-
+    
+    # Save each face to the respective cluster folder
     print("Saving faces to output folder...")
     for k, index in enumerate(indices):
         img, shape = images[index]
