@@ -65,7 +65,7 @@ for i in range(0, num_classes):
         file_path = os.path.join(output_folder_path,"face_"+str(k)+"_"+str(i))
         dlib.save_face_chip(img, shape, file_path, size=150, padding=0.25)
         
-print((time.time())-start)
+print("--- %s seconds ---" % (time.time() - start_time))
     
     
 
